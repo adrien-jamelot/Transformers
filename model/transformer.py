@@ -6,22 +6,20 @@ model_parameters_default = {
     "batch_size": 512,
     "encoder": {
         "nb_layers": 6,
-        "layers": {
-            "1": {
-                "attention": {
-                    "dim_model": 512,
-                    "dim_key": 64,
-                    "dim_value": 64
+        "blocks": {
+            "multihead": {
+                    "attention": {
+                        "dim_model": 512,
+                        "dim_key": 64,
+                        "dim_value": 64
+                    },
+                    "nb_head": 8
                 },
-                "nb_head": 8
-            },
-            "2": {
-                "feedforward": {
-                    "dim_input": ?
+            "feedforward": {
+                    "dim_input": ?,
                     "dim_output": ?
                 }
             }
-        }
     },
     "decoder": {
         "layers": {
@@ -72,11 +70,37 @@ class Transformer(nn.Module, model_parameters=model_parameters_default):
 
     def forward(self, x):
         """Apply a step forward."""
-        for layer in self.config["layers"]:
+        for layer in self.config["encoder"]:
+            
             h = MultiHeadAttention(layer["nb_head"])
         return h
 
 
+class Encoder(nn.Module, encoderConfig):
+    """Encoder.
+    """
+    def __init__(self, encoderConfig):
+        super().__init__()
+        self.update = nn.Sequential(
+            [AddAndNorm(MultiHeadAttention(encoderConfig["multihead"])),
+             AddAndNorm(nn.Linear()),
+             for i in range(encoderConfig["nbLayer"])]
+        )
+            
+    def forward(self, x):
+        return self.update(x)
+
+        
+class AddAndNorm(nn.Module, block):
+    """Residual connection.
+    """
+    def __init__(self):
+        super().__init__()
+        self.norm = ?
+    def forward(self, x):
+        return self.norm(x + block(x))
+
+    
 class ScaledDotProductAttention(nn.Module, dim_model, attention_parameters):
     """Scaled Dot-Product Attention.
 
@@ -94,12 +118,14 @@ class ScaledDotProductAttention(nn.Module, dim_model, attention_parameters):
         super().__init__()
         self.dim_key = attention_parameters["dim_key"]
         self.dim_value = attention_parameters["dim_value"]
-        self.K = torch.nn.init.xavier_uniform(
-            tensor=torch.empty(dim_model, self.dim_key),
-            gain=1)
-        self.V = torch.tensor(dim_model, self.dim_value)  # TODO
+        self.K = nn.Linear(self.dim_key, dim_model)  # TODO Check dimensions
+        self.V = nn.Linear(self.dim_value, dim_model)  # TODO
         self.activation = nn.Softmax()
-        
+        self.update = nn.Sequential(
+            self.K,
+            torch.div(sqrt(dim_model))  # TODO make precise
+            self.activation,
+        )
 
     def forward(self, x):
         """Forward Pass."""
