@@ -1,0 +1,41 @@
+"model_parameters_default": {
+    "batch_size": 512,
+    "encoder": {
+        "nb_layers": 6,
+	"dim_model": 512,
+        "blocks": {
+            "multihead": {
+                    "attention": {
+                        "dim_key": 64,
+                        "dim_value": 64
+                    },
+                    "nb_head": 8
+                },
+            "feedforward": {
+                    "dim_input": 512,
+                    "dim_output": 512
+                }
+            }
+    },
+    "decoder": {
+	"dim_model": 512,
+	"layers": {
+            "1": {
+                "attention": {
+                    "masked": "true",
+                    "dim_key": 64,
+                    "dim_value": 64
+                },
+                "nb_head": 8
+            },
+            "2": {
+                "attention": {
+                    "masked": "false",
+                    "dim_key": 64,
+                    "dim_value": 64,
+                },
+                "nb_head": 8
+            }
+        }
+    }
+}
