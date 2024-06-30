@@ -1,6 +1,14 @@
 from torch import nn
 import torch
+import json
+import simplejson
 
+with open("""c:\\users\\adrie\\GraphDataScience\\Transformers
+\\model\\transformer_config.json""") as config:
+    model_parameters_default = simplejson.load(config)
+    
+# For positional encoding we use the torch implementation to avoid
+# inefficient loops.
 
 class Transformer(nn.Module, model_parameters=model_parameters_default):
     """Main transformer block.
@@ -23,17 +31,15 @@ class Transformer(nn.Module, model_parameters=model_parameters_default):
         """Initialize parameters."""
         super().__init__()
         self.config = model_parameters
+        self.encoder = Encoder(model_parameters["encoder"])
+        self.decoder = Decoder(model_parameters["decoder"])
+        self.first_decoder_output = ??
 
     def forward(self, x):
         """Apply a step forward."""
-        for layer in self.config["encoder"]:
-            h = MultiHeadAttention(layer["nb_head"])
-        return h
-
-
-def addAndNorm(x, block, norm):
-    """Residual connection."""
-    return norm(x + block(x))
+        encoder_output = self.encoder(x)
+        decoder_output = self.decoder(encoder_output)
+        return decoder_output
 
 
 class Encoder(nn.Module):
@@ -42,6 +48,7 @@ class Encoder(nn.Module):
     def __init__(self, encoderConfig):
         """Initialize."""
         super().__init__()
+        self.nb_layers = encoderConfig["nb_layers"]
         self.dim_model = encoderConfig["dim_model"]
         self.norm = nn.LayerNorm(normalized_shape=self.dim_model,
                                  elementwise_affine=True, bias=True)
@@ -53,13 +60,14 @@ class Encoder(nn.Module):
     def forward(self, x):
         """Forward."""
         for i in range(self.nb_layers):
-            h1 = AddAndNorm(x, self.multiheads[i](x, x, x))
-            x = AddAndNorm(h1, self.feedforwards[i](h1))
+            h1 = addAndNorm(x, self.multiheads[i](x, x, x), self.norm)
+            x = addAndNorm(h1, self.feedforwards[i](h1), self.norm)
         return x
 
 
 class Decoder(nn.Module):
     """Decoder."""
+
     def __init__(self, decoderConfig):
         """Initialize."""
         super().__init__()
@@ -71,15 +79,13 @@ class Decoder(nn.Module):
                             for i in range(self.nb_layers)]
         self.feedforwards = [nn.Linear(self.dim_model, self.dim_model)
                              for i in range(self.nb_layers)]
-        self.encoder = Encoder()
         self.toProba = nn.Sequential(
             nn.Linear(self.nb_channels, self.dim_model),
             nn.Softmax()
         )
 
-    def forward(self, input, lastOutput):
+    def forward(self, input, lastOutput, encoderOutput):
         """Forward."""
-        encoderOutput = self.encoder(input)
         for i in range(self.nb_layers):
             h1 = self.AddAndNorm(lastOutput,
                                  self.multiheads1[i](lastOutput,
