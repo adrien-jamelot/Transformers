@@ -35,10 +35,10 @@ class Transformer(nn.Module, model_parameters=model_parameters_default):
         self.decoder = Decoder(model_parameters["decoder"])
         self.first_decoder_output = ??
 
-    def forward(self, x):
+    def forward(self, x, lastOutput):
         """Apply a step forward."""
         encoder_output = self.encoder(x)
-        decoder_output = self.decoder(encoder_output)
+        decoder_output = self.decoder(x, encoder_output, lastOutput)
         return decoder_output
 
 
@@ -50,11 +50,14 @@ class Encoder(nn.Module):
         super().__init__()
         self.nb_layers = encoderConfig["nb_layers"]
         self.dim_model = encoderConfig["dim_model"]
+        self.dim_feedforward = encoderConfig["feedforward"]["dim_feeforward"]
         self.norm = nn.LayerNorm(normalized_shape=self.dim_model,
                                  elementwise_affine=True, bias=True)
         self.multiheads = [MultiHeadAttention(encoderConfig["multihead"])
                            for i in range(self.nb_layers)]
-        self.feedforwards = [nn.Linear(self.dim_model, self.dim_model)
+        self.feedforwards = [nn.Sequential(nn.Linear(self.dim_model, self.dim_feedforward),
+                                           nn.ReLU(),
+                                           nn.Linear(self.dim_feedforward, self.dim_model))
                              for i in range(self.nb_layers)]
 
     def forward(self, x):
@@ -72,12 +75,15 @@ class Decoder(nn.Module):
         """Initialize."""
         super().__init__()
         self.dim_model = decoderConfig["dim_model"]
+        self.dim_feedforward = decoderConfig["feedforward"]["dim_feeforward"]
         self.layer = []
         self.multiheads1 = [MultiHeadAttention(decoderConfig["multihead"])
                             for i in range(self.nb_layers)]
         self.multiheads2 = [MultiHeadAttention(decoderConfig["multihead"])
                             for i in range(self.nb_layers)]
-        self.feedforwards = [nn.Linear(self.dim_model, self.dim_model)
+        self.feedforwards = [nn.Sequential(nn.Linear(self.dim_model, self.dim_feedforward),
+                                           nn.ReLU(),
+                                           nn.Linear(self.dim_feedforward, self.dim_model))
                              for i in range(self.nb_layers)]
         self.toProba = nn.Sequential(
             nn.Linear(self.nb_channels, self.dim_model),
