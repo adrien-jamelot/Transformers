@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-07-08 lun. 21:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transformers</title>
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Transformers</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgc06c23d">1. Resources</a></li>
+<li><a href="#orgf7d541b">2. Project</a></li>
+<li><a href="#orgab651ce">3. Stages</a>
+<ul>
+<li><a href="#org7352cb7">3.1. Preprocessing</a></li>
+</ul>
+</li>
+<li><a href="#org328f778">4. Implementation</a>
+<ul>
+<li>
+<ul>
+<li><a href="#orgeaba786">4.0.1. Training</a></li>
+<li><a href="#org59f7d8e">4.0.2. Data</a></li>
+<li><a href="#org3e05575">4.0.3. Metrics</a></li>
+<li><a href="#org7813443">4.0.4. <span class="todo TODO">TODO</span> Testing</a></li>
+</ul>
+</li>
+<li><a href="#org1b00ab8">4.1. Parameters</a>
+<ul>
+<li><a href="#org14d1794">4.1.1. Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc06c23d" class="outline-2">
+<h2 id="orgc06c23d"><span class="section-number-2">1.</span> Resources</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Original paper: <a href="https://arxiv.org/pdf/1706.03762">https://arxiv.org/pdf/1706.03762</a>
+tds: <a href="https://towardsdatascience.com/all-you-need-to-know-about-attention-and-transformers-in-depth-understanding-part-1-552f0b41d021">https://towardsdatascience.com/all-you-need-to-know-about-attention-and-transformers-in-depth-understanding-part-1-552f0b41d021</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgf7d541b" class="outline-2">
+<h2 id="orgf7d541b"><span class="section-number-2">2.</span> Project</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<a href="file:///c:/Users/adrie/GraphDataScience/Transformers/">Project</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgab651ce" class="outline-2">
+<h2 id="orgab651ce"><span class="section-number-2">3.</span> Stages</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org7352cb7" class="outline-3">
+<h3 id="org7352cb7"><span class="section-number-3">3.1.</span> Preprocessing</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+The article refers to
+</p>
+<ul class="org-ul">
+<li>[3]: <a href="20240624225431-paper_massive_exploration_of_neural_machine_translation.html#ID-6d285036-8fa4-4bcf-9a3d-4f9e559c6d08">Paper: Massive Exploration of Neural Machine Translation</a></li>
+</ul>
+<blockquote>
+<p>
+Sentences were encoded using byte-pair encoding [3], which has a
+shared source target vocabulary of about 37000 tokens
+</p>
+</blockquote>
+<p>
+<a href="20240624230506-byte_pair_encoding.html#ID-03416756-6aef-40dd-81b4-3629f3c235cd">Byte Pair Encoding</a>
+</p>
+
+<ul class="org-ul">
+<li><p>
+[38]: Google’s neural machine translation system: Bridging the gap
+between human and machine translation.
+</p>
+<blockquote>
+<p>
+For English-French, we used the significantly larger WMT 2014
+English-French dataset consisting of 36M sentences and split tokens
+into a 32000 word-piece vocabulary [38].
+</p>
+</blockquote></li>
+</ul>
+
+
+<blockquote>
+<p>
+Sentence pairs were batched together by approximate sequence
+length. Each training batch contained a set of sentence pairs
+containing approximately 25000 source tokens and 25000 target tokens
+</p>
+</blockquote>
+<p>
+I guess for that I'll have to look at their code, or on other online resources.
+It's not even that relevant but good to know what kind of dimensions thier playing with.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org328f778" class="outline-2">
+<h2 id="org328f778"><span class="section-number-2">4.</span> Implementation</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Fundamentally, I want to specify parameters in a config file, send
+that to an API and train.
+</p>
+</div>
+<div id="outline-container-orgeaba786" class="outline-4">
+<h4 id="orgeaba786"><span class="section-number-4">4.0.1.</span> Training</h4>
+<div class="outline-text-4" id="text-4-0-1">
+<p>
+Optimizer, loss, preprocessing, split/cross&#x2026;
+</p>
+</div>
+</div>
+<div id="outline-container-org59f7d8e" class="outline-4">
+<h4 id="org59f7d8e"><span class="section-number-4">4.0.2.</span> Data</h4>
+<div class="outline-text-4" id="text-4-0-2">
+<ul class="org-ul">
+<li><code>path to the data</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3e05575" class="outline-4">
+<h4 id="org3e05575"><span class="section-number-4">4.0.3.</span> Metrics</h4>
+<div class="outline-text-4" id="text-4-0-3">
+</div>
+<ol class="org-ol">
+<li><a id="org8e6bfd2"></a><span class="todo TODO">TODO</span> Check MLFlow<br /></li>
+<li><a id="org7a102e0"></a>Is Tensorboard still a thing?<br /></li>
+</ol>
+</div>
+<div id="outline-container-org7813443" class="outline-4">
+<h4 id="org7813443"><span class="section-number-4">4.0.4.</span> <span class="todo TODO">TODO</span> Testing</h4>
+<div class="outline-text-4" id="text-4-0-4">
+</div>
+<ol class="org-ol">
+<li><a id="org49b2599"></a><span class="todo TODO">TODO</span> Should return helpful exception if args/config are not good<br /></li>
+</ol>
+</div>
+
+<div id="outline-container-org1b00ab8" class="outline-3">
+<h3 id="org1b00ab8"><span class="section-number-3">4.1.</span> Parameters</h3>
+<div class="outline-text-3" id="text-4-1">
+</div>
+<div id="outline-container-org14d1794" class="outline-4">
+<h4 id="org14d1794"><span class="section-number-4">4.1.1.</span> Model</h4>
+<div class="outline-text-4" id="text-4-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="org0051ca6"></a>Input Embedding<br />
+<div class="outline-text-5" id="text-4-1-1-1">
+<blockquote>
+<p>
+Similarly to other sequence transduction models, we use learned
+embeddings to convert the input tokens and output tokens to vectors of
+dimension \(d_{model}\). We also use the usual learned liner
+transformation and softmax function to convert the decoder output to
+predicted next-token probabilities.
+</p>
+</blockquote>
+
+<p>
+It also refers to [30]: <a href="20240629113938-using_the_output_embedding_to_improve_language_models.html#ID-02660b5b-1754-4b12-a976-058b711160b2">Using the Output Embedding to Improve Language Models</a>
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org49b2216"></a>Model<br /></li>
+</ol>
+</li>
+
+
+<li><a id="orgaf21e8c"></a>Positional Encoding<br />
+<div class="outline-text-5" id="text-4-1-1-2">
+<blockquote>
+<p>
+There are many choices of positional encodings, learned and fixed [9].
+</p>
+</blockquote>
+</div>
+
+<ol class="org-ol">
+<li><a id="org8e21315"></a>Formulae in the paper<br />
+<div class="outline-text-6" id="text-4-1-1-2-1">
+\begin{align}
+\label{eq:3}
+PE_{(pos,2i)} &= \mathrm{sin}(\frac{\mathrm{pos}}{1000^{\frac{2i}{d_{model}}}})\\
+PE_{(pos,2i+1)} &= \mathrm{cos}(\frac{\mathrm{pos}}{1000^{\frac{2i}{d_{model}}}})\\
+\end{align}
+</div>
+</li>
+
+<li><a id="org7ca0b19"></a>Dimensions<br />
+<div class="outline-text-6" id="text-4-1-1-2-2">
+<p>
+Input: (C,
+Output: 
+</p>
+</div>
+</li>
+</ol>
+</li>
+
+<li><a id="org0f1d8ec"></a>Transformer hyper-parameters<br />
+<div class="outline-text-5" id="text-4-1-1-3">
+<ul class="org-ul">
+<li>#layers</li>
+</ul>
+<p>
+For the first layer:
+</p>
+<ul class="org-ul">
+<li>input dimension</li>
+</ul>
+<p>
+For all layers (including the first)
+</p>
+<ul class="org-ul">
+<li>output (value) dimension</li>
+</ul>
+</div>
+</li>
+
+<li><a id="org43154ff"></a>Multi-head hyper-parameters<br />
+<div class="outline-text-5" id="text-4-1-1-4">
+<ul class="org-ul">
+<li>\(d_{model}\): dimension of the input</li>
+<li>\(d_v\): dimension of the projected queries.</li>
+<li>\(h\): number of <code>heads</code> (linear projections of the queries.</li>
+</ul>
+<p>
+In the paper they use \(d_k=d_v=\frac{d_{model}}{h}=64\) and \(h=8\),
+meaning their batch size is 512.
+</p>
+</div>
+
+<ol class="org-ol">
+<li><a id="org5f9abc2"></a>Expression<br />
+<div class="outline-text-6" id="text-4-1-1-4-1">
+\begin{align}
+\label{eq:4}
+\mathrm{head}_i&=\mathrm{Attention}(QW_i^Q,KW_i^K,VW_i^V)\\
+\mathrm{MultiHead}(Q,K,V) &= \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O
+\end{align}
+
+
+<p>
+:ID:       92e33e65-396a-40e4-aeb7-263e6ee3a1f4
+</p>
+
+<ul class="org-ul">
+<li>\(QW_i^Q: (s, d_k) = (s, d_{model})\)
+<ul class="org-ul">
+<li>\(Q: (s, d_k) = (s,d_{model})\)</li>
+<li>\(W_i^Q : (d_{model}, d_k)\)</li>
+</ul></li>
+<li>\(KW_i^K: (s, d_k) = (s,d_{model})\)
+<ul class="org-ul">
+<li>\(K: (s, d_k) = (s,d_{model})\)</li>
+<li>\(W_i^K : (d_{model}, d_k)\)</li>
+</ul></li>
+<li>\(VW_i^V: (s, d_v) = (s,d_{model})\)
+<ul class="org-ul">
+<li>\(V: (s, d_v) = (s, d_{model})\)</li>
+<li>\(W_i^V: (d_{model}, d_v)\)</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>\(\mathrm{Multihead}(Q,K,V): (s, h \times d_{model}) \times (h \times d_v, d_{model}) = (s, d_{model})\)
+<ul class="org-ul">
+<li>\(\mathrm{Concat}(\mathrm{head}_1, ..., \matrm{head}_h): (s, h \times d_{model})\)
+<ul class="org-ul">
+<li>\(\mathrm{head}_i: (s, d_{model}) \times (d_{model}, s) \times (s, d_{model}) = (s, d_{model})\)</li>
+</ul></li>
+<li>\(W^O: (h \times d_v, d_{model})\)</li>
+</ul></li>
+</ul>
+</div>
+</li>
+
+<li><a id="orga278b5b"></a>MultiHead Details<br />
+<div class="outline-text-6" id="text-4-1-1-4-2">
+<p>
+There are three multi-head attentions.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgc07bbf7"></a>1. In the Encoder:<br />
+<div class="outline-text-7" id="text-4-1-1-4-2-1">
+<p>
+Simple self attention. The output of the previous
+</p>
+</div>
+</li>
+<li><a id="org5cfed67"></a>2. In the Encoder-Decoder:<br />
+<div class="outline-text-7" id="text-4-1-1-4-2-2">
+<ul class="org-ul">
+<li>Queries: output of the <code>decoder</code>.</li>
+<li><p>
+Keys and Values: output of the <code>encoder</code>.
+</p>
+<blockquote>
+<p>
+This allows every position in the decoder to attend over all positions
+in the input sequence. This mimics the typical encoder-decoder
+attention mechanisms in sequence-to-sequence models such as [38,2,9]
+</p>
+</blockquote>
+<p>
+where 38 refers to <a href="20240629105534-paper_google_s_neural_machine_translation_system_bridging_the_gap.html#ID-f8cfcc53-65a6-4784-96d9-113c2ae6e88b">Paper: Google’s Neural Machine Translation System: Bridging the Gap</a>
+</p>
+
+<p>
+I'm not sure how the encoder outputs keys and values.
+</p></li>
+</ul>
+</div>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a id="orgf64a0d5"></a>Layer normalization<br />
+<div class="outline-text-5" id="text-4-1-1-5">
+<blockquote>
+<p>
+We employ a residual connection [11] around each of
+the two sub-layers, followed by layer normalization [1].
+</p>
+</blockquote>
+
+<p>
+Where [1] refers to <a href="20240626184526-paper_layer_normalization.html#ID-f5d54c01-a183-4474-b1d7-94cef51a0af5">Paper: Layer Normalization</a>
+</p>
+</div>
+</li>
+<li><a id="org973a54f"></a>Attention model<br />
+<div class="outline-text-5" id="text-4-1-1-6">
+<p>
+Pick between
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgf3eaccf"></a>Dot-Product Attention<br />
+<div class="outline-text-6" id="text-4-1-1-6-1">
+\begin{equation}
+\label{eq:2}
+\mathrm{Attention}(Q,K,V)=\mathrm{softmax}(QK^T)V
+\end{equation}
+</div>
+<ol class="org-ol">
+<li><a id="orge249d81"></a>Scaled Dot-Product Attention (paper's preferred)<br />
+<div class="outline-text-7" id="text-4-1-1-6-1-1">
+\begin{equation}
+\label{eq:1}
+\mathrm{Attention}(Q,K,V)=\mathrm{softmax}(\frac{QK^T}{\sqrt{d_k}})V
+\end{equation}
+</div>
+<ol class="org-ol">
+<li><a id="org48c56c4"></a>Dimensions of the sdpa<br />
+<div class="outline-text-8" id="text-4-1-1-6-1-1-1">
+<ul class="org-ul">
+<li>Q: (s, d<sub>k</sub>)</li>
+<li>K: (s, d<sub>k</sub>)</li>
+<li>V: (s, d<sub>v</sub>)</li>
+<li>Attention(Q,K,V) : (s, d<sub>k</sub>, d<sub>k</sub>, s, s, d<sub>v</sub>) =&gt; (s, d<sub>v</sub>)</li>
+</ul>
+</div>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+
+<li><a id="org2a88eef"></a><span class="todo TODO">TODO</span> Additive attention<br />
+<div class="outline-text-6" id="text-4-1-1-6-2">
+<blockquote>
+<p>
+Additive attention computes the compatibility function using a feed-forward network with
+a single hidden layer.
+</p>
+</blockquote>
+</div>
+</li>
+<li><a id="orgef42c0b"></a>How to pick?<br />
+<div class="outline-text-6" id="text-4-1-1-6-3">
+<p>
+In practice, pick SDPA unless really good reason not too.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org709b811"></a>Explanation<br />
+<div class="outline-text-7" id="text-4-1-1-6-3-1">
+<ol class="org-ol">
+<li><code>Dot-product attention is much faster and more space-efficient</code> in
+practice as it can be implemented with highly optimized matrix
+multiplication code.</li>
+<li><code>Theoretically, they have the same complexity</code></li>
+<li>For small \(d_k\)'s, performances are equal.</li>
+<li>For high \(d_k's\), additive outperfoms unscaled dot-product
+attention, but this is counter-balanced with scaling.</li>
+</ol>
+</div>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2024-07-08 lun. 21:35</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
