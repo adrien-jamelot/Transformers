@@ -1,6 +1,6 @@
 """Residual connection."""
 
 
-def addAndNorm(x, block, norm):
+def addAndNorm(x, blockOutput, norm):
     """Residual connection."""
-    return norm(x + block(x))
+    return norm(x + blockOutput)

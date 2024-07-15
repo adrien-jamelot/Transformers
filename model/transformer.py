@@ -2,14 +2,12 @@ from torch import nn
 import torch
 import simplejson
 import sys
-from Transformers.utils.addAndNorm import addAndNorm
 sys.path.append('..\\..')
+from Transformers.utils.PositionalEncoding import positionalEncoding
+from Transformers.utils.addAndNorm import addAndNorm
 
 with open("""..\\model\\transformer_config.json""") as config:
     model_parameters_default = simplejson.load(config)
-
-# For positional encoding we use the torch implementation to avoid
-# inefficient loops.
 
 
 class Transformer(nn.Module):
@@ -32,15 +30,30 @@ class Transformer(nn.Module):
     def __init__(self, model_parameters):
         """Initialize parameters."""
         super().__init__()
-        self.config = model_parameters
+        self.dim_model = model_parameters["dim_model"]
         self.encoder = Encoder(model_parameters["encoder"])
         self.decoder = Decoder(model_parameters["decoder"])
+        self.embedding = Embedding(model_parameters)
+        self.toProba = nn.Sequential(
+            nn.Linear(self.dim_model,
+                      model_parameters["vocabulary_size"]),
+            nn.Softmax()
+        )
 
     def forward(self, x, lastOutput):
         """Apply a step forward."""
-        encoder_output = self.encoder(x)
-        decoder_output = self.decoder(x, encoder_output, lastOutput)
-        return decoder_output
+        print("Shape of x: {x.shape}")
+        encoderInput = self.embedding(x) + positionalEncoding(
+            x, self.dim_model)
+        print(f"Shape of encoderInput: {encoderInput.shape}")
+        decoderInput = self.embedding(lastOutput) + positionalEncoding(
+            lastOutput, self.dim_model)
+        print(f"Shape of decoderInput: {encoderInput.shape}")
+        encoderOutput = self.encoder(encoderInput)
+        print(f"Shape of encoderOutput: {encoderOutput.shape}")
+        decoderOutput = self.decoder(decoderInput, encoderOutput)
+        lastOutput = self.toProba(decoderOutput)
+        return lastOutput
 
 
 class Encoder(nn.Module):
@@ -78,6 +91,7 @@ class Decoder(nn.Module):
         """Initialize."""
         super().__init__()
         self.dim_model = decoderConfig["dim_model"]
+        self.norm = nn.LayerNorm(normalized_shape=self.dim_model)
         self.dim_feedforward = decoderConfig["feedforward"]["dim_feedforward"]
         self.nb_layers = decoderConfig["nb_layers"]
         self.layer = []
@@ -91,36 +105,37 @@ class Decoder(nn.Module):
                                            nn.Linear(self.dim_feedforward,
                                                      self.dim_model))
                              for i in range(self.nb_layers)]
-        self.toProba = nn.Sequential(
-            nn.Linear(self.nb_channels, self.dim_model),
-            nn.Softmax()
-        )
 
-    def forward(self, input, lastOutput, encoderOutput):
+    def forward(self, decoderInput, encoderOutput):
         """Forward."""
         for i in range(self.nb_layers):
-            h1 = self.AddAndNorm(lastOutput,
-                                 self.multiheads1[i](lastOutput,
-                                                     lastOutput,
-                                                     lastOutput))
-            h2 = self.AddAndNorm(h1,
-                                 self.multiheads2[i](h1,
-                                                     encoderOutput))
-            lastOutput = addAndNorm(h2, self.feedforwards[i](h2))
-        return self.toProba(lastOutput)
+            h1 = addAndNorm(decoderInput,
+                            self.multiheads1[i](decoderInput,
+                                                decoderInput,
+                                                decoderInput),
+                            self.norm)
+            h2 = addAndNorm(h1,
+                            self.multiheads2[i](h1,
+                                                encoderOutput,
+                                                encoderOutput),
+                            self.norm)
+            lastOutput = addAndNorm(h2,
+                                    self.feedforwards[i](h2),
+                                    self.norm)
+        return lastOutput
 
 
-def ScaledDotProductAttention(Q, K, V, attention_parameters):
+def ScaledDotProductAttention(Q, K, V, dim_model):
     """Scaled Dot-Product Attention.
 
     Inputs:
     - Q: query
     - K: key
     - V: value
+    - dim_model: model dimension
     """
-    dim_model = attention_parameters["dim_model"]
-    return torch.matmul(torch.divide(torch.matmul(Q, K),
-                                     torch.sqrt(dim_model)),
+    return torch.matmul(torch.divide(torch.matmul(Q, K.transpose(0, 1)),
+                                     torch.sqrt(torch.Tensor([dim_model]))),
                         V)
 
 
@@ -153,4 +168,18 @@ class MultiHeadAttention(nn.Module):
                                            self.WVs[i](V),
                                            self.dim_model)
                  for i in range(self.nb_heads)]
-        return torch.cat([head for head in heads], 0)
+        return torch.cat([head for head in heads], 1)
+
+
+class Embedding(nn.Module):
+    """Embedding."""
+
+    def __init__(self, model_parameters):
+        """Initialize embedding."""
+        super().__init__()
+        self.embedding = nn.Linear(model_parameters["vocabulary_size"],
+                                   model_parameters["dim_model"])
+
+    def forward(self, x):
+        """Forward step."""
+        return self.embedding(x)

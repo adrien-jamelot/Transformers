@@ -1,8 +1,51 @@
 # """Training."""
 # import numpy as np
-# import torch
+import torch
 import sys
 sys.path.append('..\\..')
+from Transformers.model.transformer import Transformer
+
+model_parameters = {
+    "dim_model": 256,
+    "vocabulary_size": 128,
+    "batch_size": 64,
+    "encoder": {
+        "nb_layers": 1,
+        "dim_model": 256,
+        "multihead": {
+            "attention": {
+                "dim_model": 256,
+                "dim_key": 128,
+                "dim_value": 128
+                },
+            "nb_heads": 2
+            },
+        "feedforward": {
+            "dim_feedforward": 256
+            }
+        },
+    "decoder": {
+        "nb_layers": 1,
+        "dim_model": 256,
+        "multihead": {
+            "attention": {
+                "dim_model": 256,
+                "dim_key": 128,
+                "dim_value": 128,
+            },
+            "nb_heads": 2
+        },
+        "feedforward": {
+            "dim_feedforward": 256
+        }
+    }
+}
+
+transformer = Transformer(model_parameters)
+x = torch.randn(10, 128)
+lastOutput = torch.randn(3, 128)
+transformer(x, lastOutput)
+
 # # import Transformers.model.transformer.Transformer
 
 # text = open("""..\\Datasets\\tiny_shakespeare.txt""",
@@ -41,39 +84,12 @@ sys.path.append('..\\..')
 # print(targets[4])
 
 
-model_parameters = {
-    "batch_size": 64,
-    "encoder": {
-        "nb_layers": 1,
-        "dim_model": 256,
-        "multihead": {
-            "attention": {
-                "dim_key": 32,
-                "dim_value": 32
-                },
-            "nb_heads": 2
-            },
-        "feedforward": {
-            "dim_feedforward": 256
-            }
-        },
-    "decoder": {
-        "nb_layers": 1,
-        "dim_model": 256,
-        "multihead": {
-            "attention": {
-                "dim_key": 32,
-                "dim_value": 32,
-            },
-            "nb_heads": 2
-        },
-        "feedforward": {
-            "dim_feedforward": 256
-        }
-    }
-}
-
-# if __name__ == "__main__":
-from Transformers.model.transformer import Transformer
-transformer = Transformer(model_parameters)
-print(transformer)
+# device = (
+#     "cuda"
+#     if torch.cuda.is_available()
+#     else "mps"
+#     if torch.backends.mps.is_available()
+#     else "cpu"
+# )
+# print(f"Using {device} device")
+# #print(transformer)
