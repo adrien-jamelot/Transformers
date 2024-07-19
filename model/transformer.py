@@ -39,18 +39,17 @@ class Transformer(nn.Module):
                       model_parameters["vocabulary_size"]),
             nn.Softmax()
         )
+        self.dropout = nn.Dropout(0.1)
 
     def forward(self, x, lastOutput):
         """Apply a step forward."""
-        print("Shape of x: {x.shape}")
         encoderInput = self.embedding(x) + positionalEncoding(
             x, self.dim_model)
-        print(f"Shape of encoderInput: {encoderInput.shape}")
         decoderInput = self.embedding(lastOutput) + positionalEncoding(
             lastOutput, self.dim_model)
-        print(f"Shape of decoderInput: {encoderInput.shape}")
+        encoderInput = self.dropout(encoderInput)
+        decoderInput = self.dropout(decoderInput)
         encoderOutput = self.encoder(encoderInput)
-        print(f"Shape of encoderOutput: {encoderOutput.shape}")
         decoderOutput = self.decoder(decoderInput, encoderOutput)
         lastOutput = self.toProba(decoderOutput)
         return lastOutput
@@ -75,12 +74,16 @@ class Encoder(nn.Module):
                                            nn.Linear(self.dim_feedforward,
                                                      self.dim_model))
                              for i in range(self.nb_layers)]
+        self.dropout = nn.Dropout(0.1)
 
     def forward(self, x):
         """Forward."""
         for i in range(self.nb_layers):
-            h1 = addAndNorm(x, self.multiheads[i](x, x, x), self.norm)
-            x = addAndNorm(h1, self.feedforwards[i](h1), self.norm)
+            h1 = addAndNorm(x, self.dropout(self.multiheads[i](x, x,
+                                                               x)),
+                            self.norm)
+            x = addAndNorm(h1, self.dropout(self.feedforwards[i](h1)),
+                           self.norm)
         return x
 
 
