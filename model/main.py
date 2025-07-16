@@ -1,5 +1,8 @@
+from training.train import train
+
+
 def main():
-    print("Hello from model!")
+    train()
 
 
 if __name__ == "__main__":
