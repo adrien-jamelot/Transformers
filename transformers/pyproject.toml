@@ -11,6 +11,11 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "gnureadline>=8.2.13",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.5",
+    "pyright>=1.1.403",
+    "pytest>=8.4.1",
     "python-lsp-server>=1.13.0",
     "ruff>=0.12.3",
 ]
@@ -27,3 +32,10 @@ explicit = true
 torch = [
   { index = "pytorch-cpu" },
 ]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 20
+
+
+

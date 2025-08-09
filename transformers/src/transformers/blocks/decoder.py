@@ -1,8 +1,8 @@
 from torch import nn
-from utils.addAndNorm import addAndNorm
-from utils.positionalEncoding import positionalEncoding
-from modules.multiHeadAttention import MultiHeadAttention
-from modules.embedding import Embedding
+from .addAndNorm import addAndNorm
+from .positionalEncoding import positionalEncoding
+from .multiHeadAttention import MultiHeadAttention
+from .embedding import Embedding
 
 
 class Decoder(nn.Module):
@@ -43,8 +43,12 @@ class Decoder(nn.Module):
         self.dropout = nn.Dropout(0.1)
 
     def forward(self, x):
-        """Forward pass of the decoder."""
-        x = self.embedding(x) + positionalEncoding(x, self.dim_model)
+        """Forward pass of the decoder.
+
+        :param x: Input tensor
+
+        """
+        x = positionalEncoding(self.embedding(x))
         x = self.dropout(x)
         for i in range(self.nb_layers):
             h1 = addAndNorm(x, self.dropout(self.multiheads1[i](x, x, x)), self.norm)
@@ -54,5 +58,5 @@ class Decoder(nn.Module):
             feedforwardOutput = self.feedforwards[i](h1)
             layerOutput = addAndNorm(h1, self.dropout(feedforwardOutput), self.norm)
             x = layerOutput
-        logits = self.toLogit(layerOutput)
+        logits = self.toLogit(x)
         return logits
