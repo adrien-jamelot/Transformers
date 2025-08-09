@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from torch import nn
 from torch.nn.modules.loss import _Loss
 from torch import Tensor
+from mlflow.tracking.fluent import ActiveRun
 
 
 def run_n_epochs(

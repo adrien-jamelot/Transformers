@@ -1,10 +1,7 @@
-from transformers.inference import inference
-from transformers.training.train import train
 from transformers.inference.inference import inference
-from transformers.blocks.decoder import Decoder
-import torch
-import json
+from transformers.training.train import train
 import argparse
+import mlflow
 
 
 def main():
@@ -16,20 +13,8 @@ def main():
     args = parser.parse_args()
 
     if args.mode == "inference":
-        # with open('model_parameters', 'r') as modelParametersFile:
-        #     modelParameters: dict = json.load(modelParametersFile)
-        # decoder = Decoder(modelParameters)
-        # checkpoint = torch.load("model_epoch_4.pt")
-        # decoder.load_state_dict(checkpoint['model_state_dict'])
-        # epoch = checkpoint['epoch']
-        # loss = checkpoint['loss']
-        # print(f"Loaded checkpoint at epoch {epoch} with loss {loss}")
-        # inference(
-        #     decoder,
-        #     modelParameters,
-
-        # )
-        pass
+        decoder = mlflow.pyfunc.load_model("models:/model/1").get_raw_model()
+        inference(decoder)
     elif args.mode == "training":
         train()
 

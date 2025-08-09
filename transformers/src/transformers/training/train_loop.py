@@ -5,6 +5,9 @@ from torch import nn
 from torch.nn.modules.loss import _Loss
 from torch.optim import Optimizer
 from transformers.training.CustomDataset import CustomDataset
+import mlflow
+from torchinfo import summary
+import mlflow.pytorch as mlpt
 
 
 def train_loop(
@@ -31,22 +34,16 @@ def train_loop(
 
         if batch % 100 == 0:
             logTrainingStatus(
-                X[0], y[0], pred[0], indexToCharacterMap, loss, batch, datasetSize
+                X[0],
+                y[0],
+                pred[0],
+                indexToCharacterMap,
+                loss,
+                batch,
+                datasetSize,
+                epoch,
             )
-    torch.save(
-        {
-            "epoch": epoch,
-            "model_state_dict": model.state_dict(),
-            "optimizer_state_dict": optimizer.state_dict(),
-            "loss": loss.item(),
-        },
-        f"model_epoch_{epoch}.pt",
-    )
-
-
-def probabilitiesMatrixToString(X, characterForIndex):
-    mostLikelyCharacterIndexSequence = torch.max(X[0], dim=1)[1].toList()
-    return "".join([characterForIndex[i] for i in mostLikelyCharacterIndexSequence])
+    mlpt.log_model(model, name="model")
 
 
 def logTrainingStatus(
@@ -57,6 +54,7 @@ def logTrainingStatus(
     loss: Tensor,
     batch: int,
     datasetSize: int,
+    epoch: int,
 ):
     lossValue = loss.item()
     currentExample = batch * 64 + 1
@@ -68,3 +66,6 @@ def logTrainingStatus(
     print("Input      :" + "".join([indexToCharacterMap[i] for i in inputString]))
     print("Target     :" + "".join([indexToCharacterMap[i] for i in y]))
     print("Prediction :" + "".join([indexToCharacterMap[i] for i in predictionString]))
+    mlflow.log_metric(
+        "loss", float(f"{lossValue:>7f}"), step=(batch // 100) * (epoch + 1)
+    )
