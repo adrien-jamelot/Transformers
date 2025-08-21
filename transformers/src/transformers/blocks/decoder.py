@@ -3,6 +3,7 @@ from .addAndNorm import addAndNorm
 from .positionalEncoding import positionalEncoding
 from .multiHeadAttention import MultiHeadAttention
 from .embedding import Embedding
+from transformers.training.TrainingModels import ModelParameters
 
 
 class Decoder(nn.Module):
@@ -10,19 +11,19 @@ class Decoder(nn.Module):
     It does not
     """
 
-    def __init__(self, model_parameters):
+    def __init__(self, modelParameters: ModelParameters):
         """Initialize."""
         super().__init__()
-        self.dim_model = model_parameters["dim_model"]
+        self.dim_model = modelParameters.dimModel
         self.norm = nn.LayerNorm(normalized_shape=self.dim_model)
-        self.dim_feedforward = model_parameters[
-            "dim_model"
-        ]  # must be same dimension because we add residuals
-        self.nb_layers = model_parameters["nb_layers"]
-        self.embedding = Embedding(model_parameters)
+        self.dim_feedforward = (
+            modelParameters.dimModel
+        )  # must be same dimension because we add residuals
+        self.nb_layers = modelParameters.nbLayers
+        self.embedding = Embedding(modelParameters)
         self.multiheads1 = nn.ModuleList(
             [
-                MultiHeadAttention(model_parameters, masked=True)
+                MultiHeadAttention(modelParameters, masked=True)
                 for i in range(self.nb_layers)
             ]
         )
@@ -36,10 +37,10 @@ class Decoder(nn.Module):
                     nn.ReLU(),
                     nn.Linear(self.dim_feedforward, self.dim_model),
                 )
-                for i in range(self.nb_layers)
+                for _ in range(self.nb_layers)
             ]
         )
-        self.toLogit = nn.Linear(self.dim_model, model_parameters["vocabulary_size"])
+        self.toLogit = nn.Linear(self.dim_model, modelParameters.vocabularySize)
         self.dropout = nn.Dropout(0.1)
 
     def forward(self, x):
